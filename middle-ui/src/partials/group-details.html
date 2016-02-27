@@ -1,0 +1,14 @@
+<div ng-controller="GroupDetailsController">
+    <div class="input-group padding-bottom-md"><input class="form-control" readonly="readonly" ng-model="copyUrl"/><span
+            class="input-group-btn"><button
+            class="btn btn-default"><i class="glyphicon glyphicon-copy"></i></button></span></div>
+    <div></div>
+    <div class="map"></div>
+    <div class="list-group">
+        <a href="" class="list-group-item" ng-class="{disabled: isActive(member)}" ng-repeat="member in members" ng-click="toggle(member)">
+            <h5>{{ member.name }}
+                <small>({{ member.latitude }}, {{ member.longitude }})</small>
+            </h5>
+        </a>
+    </div>
+</div>

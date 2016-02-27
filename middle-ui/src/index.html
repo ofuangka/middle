@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en" ng-app="Middle">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+    <title>/middle/</title>
+    <link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.min.css"/>
+    <!-- build:css middle.min.css -->
+    <link rel="stylesheet" href="middle.css"/>
+    <!-- /build -->
+</head>
+<body>
+<div class="container-fluid">
+    <h3><a ui-sref="groupList()">/middle/</a></h3>
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <div class="pull-right" uib-dropdown=""><a href="" uib-dropdown-toggle=""><i
+                    class="glyphicon glyphicon-chevron-down"></i></a>
+                <ul ng-controller="UserMenuController" ng-cloak="" uib-dropdown-menu="">
+                    <li><a href="" ng-click="showAboutMiddle()">About /middle/</a></li>
+                    <li><a href="" ng-click="showWhatsNew()">What's new</a></li>
+                    <li class="dropdown-header">Signed in as {{ my.username || '...' }}</li>
+                    <li><a href="" ng-click="showPreferences()">Preferences</a></li>
+                    <li><a href="{{ my.logoutUrl }}" ng-if="my.logoutUrl">Sign out</a><a href="" ng-if="!my.logoutUrl">...</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="panel-body">
+            <div ui-view=""></div>
+        </div>
+        <div class="panel-footer">
+            <small>&copy; 2016 Osha Fuangkasae</small>
+        </div>
+    </div>
+</div>
+<script src="components/angular/angular.min.js"></script>
+<script src="components/angular-ui-router/release/angular-ui-router.min.js"></script>
+<script src="components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+<!-- build:js middle.min.js -->
+<script src="main.js"></script>
+<!-- /build -->
+</body>
+</html>

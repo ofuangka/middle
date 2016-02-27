@@ -1,0 +1,25 @@
+{
+  "name": "middle",
+  "description": "middle is a web application that finds the geographic center of multiple users",
+  "main": "",
+  "authors": [
+    "Osha Fuangkasae <ofuangka@gmail.com>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/ofuangka/middle",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "src/components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.6",
+    "angular": "1.5.0",
+    "angular-bootstrap": "^1.2.1",
+    "angular-ui-router": "^0.2.18"
+  }
+}
