@@ -1,6 +1,9 @@
-.padding-bottom-md {
-    padding-bottom: 15px;
+.margin-bottom-md {
+    margin-bottom: 15px;
 }
-.map {
+.margin-right-sm {
+    margin-right: 10px;
+}
+#group-details-map {
     height: 300px;
 }

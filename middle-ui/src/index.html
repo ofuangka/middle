@@ -11,7 +11,7 @@
 </head>
 <body>
 <div class="container-fluid">
-    <h3><a ui-sref="groupList()">/middle/</a></h3>
+    <h1><a ui-sref="groupList()">/middle/</a></h1>
     <div class="panel panel-primary">
         <div class="panel-heading">
             <div class="pull-right" uib-dropdown=""><a href="" uib-dropdown-toggle=""><i
@@ -20,7 +20,6 @@
                     <li><a href="" ng-click="showAboutMiddle()">About /middle/</a></li>
                     <li><a href="" ng-click="showWhatsNew()">What's new</a></li>
                     <li class="dropdown-header">Signed in as {{ my.username || '...' }}</li>
-                    <li><a href="" ng-click="showPreferences()">Preferences</a></li>
                     <li><a href="{{ my.logoutUrl }}" ng-if="my.logoutUrl">Sign out</a><a href="" ng-if="!my.logoutUrl">...</a>
                     </li>
                 </ul>
@@ -38,6 +37,8 @@
 <script src="components/angular/angular.min.js"></script>
 <script src="components/angular-ui-router/release/angular-ui-router.min.js"></script>
 <script src="components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+<script src="components/angular-clipboard/angular-clipboard.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCqwMKe5s2MPJcexFu7liwZK6qt4ktBlyA"></script>
 <!-- build:js middle.min.js -->
 <script src="main.js"></script>
 <!-- /build -->

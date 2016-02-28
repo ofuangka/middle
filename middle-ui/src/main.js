@@ -1,6 +1,6 @@
 (function wrapper(angular) {
     'use strict';
-    angular.module('Middle', ['ui.router', 'ui.bootstrap'])
+    angular.module('Middle', ['ui.router', 'ui.bootstrap', 'angular-clipboard'])
         .config(['$stateProvider', '$urlRouterProvider', function configFn($stateProvider, $urlRouterProvider) {
             $urlRouterProvider.otherwise('/');
             $stateProvider.state('groupList', {
@@ -45,6 +45,47 @@
                 }
             };
         }])
+        .filter('capitalize', function capitalizeFilterFactory() {
+            return function capitalize(data) {
+                if (angular.isString(data) && data.length > 0) {
+                    return data.charAt(0).toUpperCase() + data.slice(1);
+                }
+                return data;
+            };
+        })
+        .directive('middleMap', ['centerService', function middleMapFactory(centerService) {
+            return {
+                restrict: 'EA',
+                link: function linkFn(scope, element, attrs) {
+                    function parametersDidChange() {
+                        var center = centerService.center(scope.groupMembers, scope.algorithm);
+                        new google.maps.Map(element[0], {
+                            center: {
+                                lat: center[0],
+                                lng: center[1]
+                            },
+                            zoom: center[2]
+                        });
+                    }
+                    scope.$watch('[groupMembers, algorithm]', parametersDidChange, true);
+                },
+                scope: {
+                    groupMembers: '=middleMap',
+                    algorithm: '='
+                }
+            };
+        }])
+        .provider('centerService', function centerServiceProvider() {
+            return {
+                $get: [function $get() {
+                    return {
+                        center: function(groupMembers, algorithm) {
+                            return [-34.397, 150.644, 8];
+                        }
+                    };
+                }]
+            };
+        })
         .controller('UserMenuController', ['$scope', '$uibModal', function UserMenuController($scope, $uibModal) {
             $scope.my = {
                 username: 'ofuangka',
@@ -60,13 +101,6 @@
                     templateUrl: 'partials/whats-new.html'
                 });
             };
-            $scope.showPreferences = function showPreferences() {
-                $uibModal.open({
-                    templateUrl: 'partials/preferences.html',
-                    controller: 'PreferencesController',
-                    scope: $scope
-                });
-            }
         }])
         .controller('GroupListController', ['$scope', '$uibModal', function GroupListController($scope, $uibModal) {
             $scope.showCreateGroup = function showCreateGroup() {
@@ -77,27 +111,40 @@
                 });
             };
             $scope.groups = [
-                {id: '0-ref', name: 'Dooty', numMembers: 4, ts: (new Date()).getTime() },
-                {id: '1-ref', name: 'Booger', numMembers: 6, ts: (new Date()).getTime() }
+                {id: '0-ref', name: 'Dooty', numMembers: 4, ts: (new Date()).getTime()},
+                {id: '1-ref', name: 'Booger', numMembers: 6, ts: (new Date()).getTime()}
             ];
         }])
         .controller('CreateGroupController', ['$scope', function CreateGroupController($scope) {
 
         }])
-        .controller('PreferencesController', ['$scope', function PreferencesController($scope) {
-
-        }])
-        .controller('GroupDetailsController', ['$scope', '$stateParams', function GroupDetailsController($scope, $stateParams) {
-            var disabledMembers = {};
+        .controller('GroupDetailsController', ['$scope', '$window', '$timeout', '$stateParams', function GroupDetailsController($scope, $window, $timeout, $stateParams) {
             $scope.isActive = function isActive(member) {
-                return !disabledMembers[member.id];
+                return member.active;
             };
             $scope.toggle = function toggle(member) {
-                disabledMembers[member.id] = !disabledMembers[member.id];
+                member.active = !member.active;
+            };
+            $scope.openNew = function openNew(url) {
+                $window.open(url, '_blank');
+            };
+            $scope.copyDidSucceed = function copyDidSucceed() {
+                $scope.showCopySuccessTooltip = true;
+                $timeout(function hideTooltip() {
+                    $scope.showCopySuccessTooltip = false;
+                }, 1000);
+            };
+            $scope.copyDidFail = function copyDidFail(err) {
+                // TODO: implement
             };
             $scope.copyUrl = 'http://middle-me.appspot.com/ui/#/groups/' + $stateParams.groupId;
             $scope.members = [
-                { id: '0-ref', name: 'ofuangka', latitude: 50.02, longitude: 30.30 }
+                { id: '0-ref', name: 'ofuangka', latitude: 50.02, longitude: 30.30, active: true }
             ];
+            $scope.algorithms = ['trossian'];
+            $scope.links = {
+                'trossian': 'http://stackoverflow.com/a/17225597'
+            };
+            $scope.selectedAlgorithm = $scope.algorithms[0];
         }]);
 }(window.angular));
