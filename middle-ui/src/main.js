@@ -1,6 +1,6 @@
 (function wrapper(angular) {
     'use strict';
-    angular.module('Middle', ['ui.router', 'ui.bootstrap', 'angular-clipboard'])
+    angular.module('Middle', ['ngAnimate', 'ngTouch', 'ui.router', 'ui.bootstrap', 'angular-clipboard', 'spinner', 'loadingButton'])
         .config(['$stateProvider', '$urlRouterProvider', function configFn($stateProvider, $urlRouterProvider) {
             $urlRouterProvider.otherwise('/');
             $stateProvider.state('groupList', {
@@ -116,7 +116,10 @@
             ];
         }])
         .controller('CreateGroupController', ['$scope', function CreateGroupController($scope) {
-
+            $scope.userDidCreateGroup = function userDidCreateGroup() {
+                $scope.isCreatingGroup = true;
+                $scope.$close();
+            };
         }])
         .controller('GroupDetailsController', ['$scope', '$window', '$timeout', '$stateParams', function GroupDetailsController($scope, $window, $timeout, $stateParams) {
             $scope.isActive = function isActive(member) {
@@ -137,14 +140,16 @@
             $scope.copyDidFail = function copyDidFail(err) {
                 // TODO: implement
             };
+            $scope.selectAlgorithm = function selectAlgorithm(algorithm) {
+                $scope.selectedAlgorithm = algorithm;
+            };
             $scope.copyUrl = 'http://middle-me.appspot.com/ui/#/groups/' + $stateParams.groupId;
             $scope.members = [
                 { id: '0-ref', name: 'ofuangka', latitude: 50.02, longitude: 30.30, active: true }
             ];
-            $scope.algorithms = ['trossian'];
-            $scope.links = {
-                'trossian': 'http://stackoverflow.com/a/17225597'
-            };
+            $scope.algorithms = [
+                {name: 'trossian', link: 'http://stackoverflow.com/a/17225597'}
+            ];
             $scope.selectedAlgorithm = $scope.algorithms[0];
         }]);
 }(window.angular));
