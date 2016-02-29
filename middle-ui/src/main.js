@@ -53,20 +53,71 @@
                 return data;
             };
         })
-        .directive('middleMap', ['centerService', function middleMapFactory(centerService) {
+        .directive('middleMap', ['$filter', 'centerService', function middleMapFactory($filter, centerService) {
             return {
                 restrict: 'EA',
                 link: function linkFn(scope, element, attrs) {
                     function parametersDidChange() {
-                        var center = centerService.center(scope.groupMembers, scope.algorithm);
-                        new google.maps.Map(element[0], {
+                        var center = centerService.center(scope.groupMembers, scope.algorithm.name),
+                            map,
+                            bounds = new google.maps.LatLngBounds(),
+                            centerPin,
+                            infoWindow;
+
+                        /* create the map, centered around the center pin */
+                        map = new google.maps.Map(element[0], {
                             center: {
                                 lat: center[0],
                                 lng: center[1]
                             },
                             zoom: center[2]
                         });
+
+                        /* drop pins for each group member */
+                        angular.forEach(scope.groupMembers, function iterator(groupMember) {
+                            if (groupMember.active) {
+                                bounds.extend(new google.maps.Marker({
+                                    position: {
+                                        lat: groupMember.latitude,
+                                        lng: groupMember.longitude
+                                    },
+                                    map: map,
+                                    label: groupMember.name,
+                                    title: groupMember.name
+                                }).getPosition());
+                            }
+                        });
+
+                        /* drop the center pin */
+                        centerPin = new google.maps.Marker({
+                            animation: google.maps.Animation.DROP,
+                            position: {
+                                lat: center[0],
+                                lng: center[1]
+                            },
+                            map: map
+                        });
+
+                        /* zoom the map to the area that the pins fall */
+                        map.fitBounds(bounds);
+
+                        /* create the info window */
+                        infoWindow = new google.maps.InfoWindow({
+                            content: '<h4>/middle/</h4><p>' +
+                            $filter('number')(center[0]) + ', ' +
+                            $filter('number')(center[1]) +
+                            '</p><p><a href="https://www.google.com/maps/search/restaurants/@' +
+                            center[0] + ',' + center[1] +
+                            '" target="_blank">Search nearby this location...</a></a></p>'
+                        });
+                        centerPin.addListener('click', function userDidClickCenterPin() {
+                            infoWindow.open(map, centerPin);
+                        });
+
+                        /* open the info window */
+                        infoWindow.open(map, centerPin);
                     }
+
                     scope.$watch('[groupMembers, algorithm]', parametersDidChange, true);
                 },
                 scope: {
@@ -79,8 +130,24 @@
             return {
                 $get: [function $get() {
                     return {
-                        center: function(groupMembers, algorithm) {
-                            return [-34.397, 150.644, 8];
+                        center: function (groupMembers, algorithm) {
+                            var i, lat = 0, lng = 0, numActive = 0;
+                            switch (algorithm) {
+                                case 'simple':
+                                    for (i = 0; i < groupMembers.length; i++) {
+                                        if (groupMembers[i].active) {
+                                            lat += groupMembers[i].latitude;
+                                            lng += groupMembers[i].longitude;
+                                            numActive++;
+                                        }
+                                    }
+                                    lat /= numActive;
+                                    lng /= numActive;
+                                    break;
+                                default:
+                                    break;
+                            }
+                            return [lat, lng, 15];
                         }
                     };
                 }]
@@ -93,12 +160,16 @@
             };
             $scope.showAboutMiddle = function showAboutMiddle() {
                 $uibModal.open({
-                    templateUrl: 'partials/about-middle.html'
+                    templateUrl: 'partials/about-middle.html',
+                    controller: 'AboutController',
+                    scope: $scope
                 });
             };
             $scope.showWhatsNew = function showWhatsNew() {
                 $uibModal.open({
-                    templateUrl: 'partials/whats-new.html'
+                    templateUrl: 'partials/whats-new.html',
+                    controller: 'WhatsNewController',
+                    scope: $scope
                 });
             };
         }])
@@ -145,11 +216,30 @@
             };
             $scope.copyUrl = 'http://middle-me.appspot.com/ui/#/groups/' + $stateParams.groupId;
             $scope.members = [
-                { id: '0-ref', name: 'ofuangka', latitude: 50.02, longitude: 30.30, active: true }
+                {id: '0-ref', name: 'ofuangka', latitude: 40.0442507, longitude: -75.3882961, active: true},
+                {id: '1-ref', name: 'tracylvalenzuela', latitude: 40.0065617, longitude: -75.2649071, active: true},
+                {id: '2-ref', name: 'forrestjacobs', latitude: 40.079362, longitude: -75.3039367, active: true}
             ];
             $scope.algorithms = [
+                {name: 'simple', link: 'https://en.wikipedia.org/wiki/Center_of_mass'},
                 {name: 'trossian', link: 'http://stackoverflow.com/a/17225597'}
             ];
             $scope.selectedAlgorithm = $scope.algorithms[0];
+        }])
+        .controller('AboutController', ['$scope', function AboutController($scope) {
+            $scope.activeSlide = 0;
+        }])
+        .controller('WhatsNewController', ['$scope', function WhatsNewController($scope) {
+            $scope.updates = [
+                {
+                    ts: (new Date()).getTime(),
+                    descriptions: [
+                        'Initial application creation.',
+                        'Integrated with Google Maps.',
+                        'Group List view',
+                        'Group Details view'
+                    ]
+                }
+            ];
         }]);
 }(window.angular));

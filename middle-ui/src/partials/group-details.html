@@ -4,7 +4,7 @@
             class="btn btn-default" clipboard="" text="copyUrl" on-copied="copyDidSucceed()"
             on-failed="copyDidFail(err)" uib-tooltip="Copied!" tooltip-is-open="showCopySuccessTooltip" tooltip-trigger="none"><i class="glyphicon glyphicon-copy margin-right-sm"></i>Copy me!
     </button></span></div>
-    <div id="group-details-map" class="margin-bottom-md" middle-map="members"></div>
+    <div id="group-details-map" class="margin-bottom-md" middle-map="members" algorithm="selectedAlgorithm"></div>
     <div class="text-right margin-bottom-md">
         <label class="margin-right-sm">
             <span ng-if="!selectedAlgorithm.link">Algorithm:</span>

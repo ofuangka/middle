@@ -2,12 +2,24 @@
     margin-bottom: 15px;
 }
 
+.margin-bottom-lg {
+    margin-bottom: 50px;
+}
+
 .margin-right-sm {
     margin-right: 10px;
 }
 
 .carousel-control.right, .carousel-control.left {
     background-image: none;
+}
+
+.carousel-indicators li {
+    border-color: #bbb;
+}
+
+.carousel-indicators .active {
+    background-color: #ccc;
 }
 
 #group-details-map {
