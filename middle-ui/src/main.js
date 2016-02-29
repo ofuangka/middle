@@ -106,7 +106,7 @@
                             content: '<h4>/middle/</h4><p>' +
                             $filter('number')(center[0]) + ', ' +
                             $filter('number')(center[1]) +
-                            '</p><p><a href="https://www.google.com/maps/search/restaurants/@' +
+                            '</p><p><a href="https://www.google.com/maps/?q=restaurants&sll=' +
                             center[0] + ',' + center[1] +
                             '" target="_blank">Search nearby this location...</a></a></p>'
                         });
@@ -133,7 +133,7 @@
                         center: function (groupMembers, algorithm) {
                             var i, lat = 0, lng = 0, numActive = 0;
                             switch (algorithm) {
-                                case 'simple':
+                                default:
                                     for (i = 0; i < groupMembers.length; i++) {
                                         if (groupMembers[i].active) {
                                             lat += groupMembers[i].latitude;
@@ -143,8 +143,6 @@
                                     }
                                     lat /= numActive;
                                     lng /= numActive;
-                                    break;
-                                default:
                                     break;
                             }
                             return [lat, lng, 15];
@@ -192,7 +190,25 @@
                 $scope.$close();
             };
         }])
-        .controller('GroupDetailsController', ['$scope', '$window', '$timeout', '$stateParams', function GroupDetailsController($scope, $window, $timeout, $stateParams) {
+        .controller('GroupDetailsController', ['$scope', '$window', '$timeout', '$stateParams', '$uibModal', function GroupDetailsController($scope, $window, $timeout, $stateParams, $uibModal) {
+            function didRetrievePosition(position) {
+                /* TODO: send the user's position */
+                /* TODO: once the request is successful, add/replace the user's position in the member list */
+            }
+
+            function sendPosition() {
+                if ($window.navigator.geolocation) {
+                    $window.navigator.geolocation.getCurrentPosition(didRetrievePosition);
+                } else {
+                    $uibModal.open({
+                        templateUrl: 'partials/message.html',
+                        controller: 'NoGeolocationMessageController',
+                        scope: $scope,
+                        size: 'sm'
+                    });
+                }
+            }
+
             $scope.isActive = function isActive(member) {
                 return member.active;
             };
@@ -209,22 +225,51 @@
                 }, 1000);
             };
             $scope.copyDidFail = function copyDidFail(err) {
-                // TODO: implement
+                $uibModal.open({
+                    templateUrl: 'partials/message.html',
+                    controller: 'CopyFailedMessageController',
+                    scope: $scope,
+                    size: 'sm'
+                });
             };
             $scope.selectAlgorithm = function selectAlgorithm(algorithm) {
                 $scope.selectedAlgorithm = algorithm;
             };
+            $scope.resendPosition = sendPosition;
             $scope.copyUrl = 'http://middle-me.appspot.com/ui/#/groups/' + $stateParams.groupId;
             $scope.members = [
-                {id: '0-ref', name: 'ofuangka', latitude: 40.0442507, longitude: -75.3882961, active: true},
-                {id: '1-ref', name: 'tracylvalenzuela', latitude: 40.0065617, longitude: -75.2649071, active: true},
-                {id: '2-ref', name: 'forrestjacobs', latitude: 40.079362, longitude: -75.3039367, active: true}
+                {
+                    id: '0-ref',
+                    name: 'ofuangka',
+                    latitude: 40.0442507,
+                    longitude: -75.3882961,
+                    ts: (new Date()).getTime(),
+                    active: true
+                },
+                {
+                    id: '1-ref',
+                    name: 'tracylvalenzuela',
+                    latitude: 40.0065617,
+                    longitude: -75.2649071,
+                    ts: (new Date()).getTime(),
+                    active: true
+                },
+                {
+                    id: '2-ref',
+                    name: 'forrestjacobs',
+                    latitude: 40.079362,
+                    longitude: -75.3039367,
+                    ts: (new Date()).getTime(),
+                    active: true
+                }
             ];
             $scope.algorithms = [
                 {name: 'simple', link: 'https://en.wikipedia.org/wiki/Center_of_mass'},
                 {name: 'trossian', link: 'http://stackoverflow.com/a/17225597'}
             ];
             $scope.selectedAlgorithm = $scope.algorithms[0];
+
+            /* TODO: if the user has not yet sent their position, send it */
         }])
         .controller('AboutController', ['$scope', function AboutController($scope) {
             $scope.activeSlide = 0;
@@ -241,5 +286,13 @@
                     ]
                 }
             ];
+        }])
+        .controller('NoGeolocationMessageController', ['$scope', function NoGeolocationMessageController($scope) {
+            $scope.title = 'Unable to retrieve your location';
+            $scope.message = 'We couldn\'t determine your location for some reason. Feel free to try again.';
+        }])
+        .controller('CopyFailedMessageController', ['$scope', function CopyFailedMessageController($scope) {
+            $scope.title = 'Could not copy URL';
+            $scope.message = 'We couldn\'t copy the URL for some reason. You may have to do it the old fashioned way.';
         }]);
 }(window.angular));

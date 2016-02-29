@@ -25,8 +25,8 @@
             <h5>
                 <i class="pull-right glyphicon margin-right-sm"
                    ng-class="{'glyphicon-ok': isActive(member), 'glyphicon-minus': !isActive(member)}"></i>
-                {{ member.name }}
-                <small>({{ member.latitude }}, {{ member.longitude }})</small>
+                <strong>{{ member.name }}</strong>: {{ member.latitude | number }}, {{ member.longitude | number }}
+                <small>({{ member.ts | date : 'mediumTime' }})</small>
             </h5>
         </a>
     </div>
