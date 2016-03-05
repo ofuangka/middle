@@ -2,9 +2,9 @@
     'use strict';
     angular.module('Middle', ['ngAnimate', 'ngTouch', 'ui.router', 'ui.bootstrap', 'angular-clipboard', 'spinner', 'loadingButton'])
         .config(['$stateProvider', '$urlRouterProvider', function configFn($stateProvider, $urlRouterProvider) {
-            $urlRouterProvider.otherwise('/');
+            $urlRouterProvider.otherwise('/groups');
             $stateProvider.state('groupList', {
-                url: '/',
+                url: '/groups',
                 templateUrl: 'partials/group-list.html'
             });
             $stateProvider.state('groupDetails', {

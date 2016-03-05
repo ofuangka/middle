@@ -7,7 +7,7 @@ module.exports = function(grunt) {
                 force: true
             },
             dist: 'dist/',
-            ui: '../middle-me/src/main/webapp/ui/'
+            ui: '../middle-me/ui/'
         },
         copy: {
             components: {
@@ -26,7 +26,7 @@ module.exports = function(grunt) {
                 expand: true,
                 cwd: 'dist/',
                 src: '**',
-                dest: '../middle-me/src/main/webapp/ui/'
+                dest: '../middle-me/ui/'
             }
         },
         concat: {
