@@ -6,8 +6,7 @@ module.exports = function(grunt) {
             options: {
                 force: true
             },
-            dist: 'dist/',
-            ui: '../middle-me/ui/'
+            dist: 'dist/'
         },
         copy: {
             components: {
@@ -21,12 +20,6 @@ module.exports = function(grunt) {
                 cwd: 'src/',
                 src: ['**/*', '!**/components/**', '!**/*.js', '!**/*.css', '!index.html'],
                 dest: 'dist/'
-            },
-            dist: {
-                expand: true,
-                cwd: 'dist/',
-                src: '**',
-                dest: '../middle-me/ui/'
             }
         },
         concat: {
@@ -66,5 +59,5 @@ module.exports = function(grunt) {
         }
     });
     grunt.registerTask('build', ['clean', 'copy:components', 'copy:src', 'concat', 'uglify', 'cssmin', 'processhtml', 'htmlmin']);
-    grunt.registerTask('default', ['build', 'copy:dist']);
+    grunt.registerTask('default', ['build']);
 };
