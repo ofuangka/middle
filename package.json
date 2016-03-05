@@ -1,0 +1,19 @@
+{
+  "name": "middle",
+  "version": "1.0.0",
+  "description": "middle is a web application that finds the geographic center of multiple users",
+  "main": "server/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/ofuangka/middle.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ofuangka/middle/issues"
+  },
+  "homepage": "https://github.com/ofuangka/middle#readme"
+}
