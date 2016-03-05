@@ -1,0 +1,1 @@
+<div class="modal-header"><a class="close" ng-click="$dismiss()">&times;</a><h4 class="modal-title">What's new?</h4></div><div class="modal-body"><div ng-repeat="update in updates"><h3>{{ update.ts | date }}</h3><ul><li ng-repeat="description in update.descriptions">{{ description }}</li></ul></div></div><div class="modal-footer"></div>
