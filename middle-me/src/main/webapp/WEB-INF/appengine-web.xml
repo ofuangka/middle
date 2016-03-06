@@ -9,5 +9,6 @@
     </static-files>
     <system-properties>
         <property name="java.util.logging.config.file" value="WEB-INF/logging.properties"/>
+        <property name="middle-me.logout-url" value="http://middle-me.appspot.com/ui/#/groups" />
     </system-properties>
 </appengine-web-app>

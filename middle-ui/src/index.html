@@ -19,7 +19,7 @@
                 <ul ng-controller="UserMenuController" ng-cloak="" uib-dropdown-menu="">
                     <li><a href="" ng-click="showAboutMiddle()">About /middle/</a></li>
                     <li><a href="" ng-click="showWhatsNew()">What's new</a></li>
-                    <li class="dropdown-header">Signed in as {{ my.username || '...' }}</li>
+                    <li class="dropdown-header">Signed in as {{ my.name || '...' }}</li>
                     <li><a href="{{ my.logoutUrl }}" ng-if="my.logoutUrl">Sign out</a><a href="" ng-if="!my.logoutUrl">...</a>
                     </li>
                 </ul>
@@ -35,6 +35,7 @@
     </div>
 </div>
 <script src="components/angular/angular.min.js"></script>
+<script src="components/angular-resource/angular-resource.min.js"></script>
 <script src="components/angular-animate/angular-animate.min.js"></script>
 <script src="components/angular-touch/angular-touch.min.js"></script>
 <script src="components/angular-ui-router/release/angular-ui-router.min.js"></script>
@@ -45,6 +46,7 @@
 <script src="spinner.js"></script>
 <script src="loading-button.js"></script>
 <script src="main.js"></script>
+<script src="services.js"></script>
 <!-- /build -->
 </body>
 </html>

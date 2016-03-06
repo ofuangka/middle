@@ -1,6 +1,6 @@
 (function wrapper(angular) {
     'use strict';
-    angular.module('Middle', ['ngAnimate', 'ngTouch', 'ui.router', 'ui.bootstrap', 'angular-clipboard', 'spinner', 'loadingButton'])
+    angular.module('Middle', ['ngResource', 'ngAnimate', 'ngTouch', 'ui.router', 'ui.bootstrap', 'angular-clipboard', 'spinner', 'loadingButton'])
         .config(['$stateProvider', '$urlRouterProvider', function configFn($stateProvider, $urlRouterProvider) {
             $urlRouterProvider.otherwise('/');
             $stateProvider.state('groupList', {
@@ -126,36 +126,8 @@
                 }
             };
         }])
-        .provider('centerService', function centerServiceProvider() {
-            return {
-                $get: [function $get() {
-                    return {
-                        center: function (groupMembers, algorithm) {
-                            var i, lat = 0, lng = 0, numActive = 0;
-                            switch (algorithm) {
-                                default:
-                                    for (i = 0; i < groupMembers.length; i++) {
-                                        if (groupMembers[i].active) {
-                                            lat += groupMembers[i].latitude;
-                                            lng += groupMembers[i].longitude;
-                                            numActive++;
-                                        }
-                                    }
-                                    lat /= numActive;
-                                    lng /= numActive;
-                                    break;
-                            }
-                            return [lat, lng, 15];
-                        }
-                    };
-                }]
-            };
-        })
-        .controller('UserMenuController', ['$scope', '$uibModal', function UserMenuController($scope, $uibModal) {
-            $scope.my = {
-                username: 'ofuangka',
-                logoutUrl: '.'
-            };
+        .controller('UserMenuController', ['$scope', '$uibModal', 'User', function UserMenuController($scope, $uibModal, User) {
+            $scope.my = User.self;
             $scope.showAboutMiddle = function showAboutMiddle() {
                 $uibModal.open({
                     templateUrl: 'partials/about-middle.html',
