@@ -7,7 +7,7 @@
         <div class="form-group has-feedback"
              ng-class="{'has-error': createGroupForm.$dirty && createGroupForm.$invalid, 'has-success': createGroupForm.$dirty && createGroupForm.$valid}">
             <label class="control-label">Name</label>
-            <input class="form-control" required="required" ng-model="groupName"/>
+            <input class="form-control" required="required" ng-model="newGroup.name"/>
             <i class="glyphicon form-control-feedback"
                ng-class="{'glyphicon-remove': createGroupForm.$invalid, 'glyphicon-ok': createGroupForm.$valid}"
                ng-if="createGroupForm.$dirty"></i>

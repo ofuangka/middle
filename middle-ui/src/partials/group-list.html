@@ -3,12 +3,17 @@
         a
         new
         group</a></div>
-    <spinner ng-if="isLoadingGroups"></spinner>
+    <spinner ng-if="isLoadingGroups()"></spinner>
+    <uib-alert type="info" ng-if="!isLoadingGroups() && groups.length === 0">No groups created yet. Try <a href=""
+                                                                                                           class="alert-link"
+                                                                                                           ng-click="showCreateGroup()">creating
+        one</a>.
+    </uib-alert>
     <div class="list-group">
-        <a class="list-group-item" ng-repeat="group in groups" ui-sref="groupDetails({ groupId: group.id })">
+        <a class="list-group-item" ng-repeat="group in groups | orderBy : 'ts' : true" ui-sref="groupDetails({ groupId: group.id })">
             <h5><span class="badge">{{ group.ts
             | groupListDate }}</span> {{ group.name }}
-                <small>({{ group.numMembers | members }})</small>
+                <small>({{ group.members.length | members }})</small>
             </h5>
         </a>
     </div>

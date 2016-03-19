@@ -2,6 +2,8 @@ package com.middle.api.domain;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.middle.api.support.HasId;
+
 @XmlRootElement
 public class User extends HasId {
 

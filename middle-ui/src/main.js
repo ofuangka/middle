@@ -1,10 +1,10 @@
-(function wrapper(angular) {
+(function wrapper(angular, io) {
     'use strict';
     angular.module('Middle', ['ngResource', 'ngAnimate', 'ngTouch', 'ui.router', 'ui.bootstrap', 'angular-clipboard', 'spinner', 'loadingButton'])
         .config(['$stateProvider', '$urlRouterProvider', function configFn($stateProvider, $urlRouterProvider) {
-            $urlRouterProvider.otherwise('/');
+            $urlRouterProvider.otherwise('/groups');
             $stateProvider.state('groupList', {
-                url: '/',
+                url: '/groups',
                 templateUrl: 'partials/group-list.html'
             });
             $stateProvider.state('groupDetails', {
@@ -143,29 +143,48 @@
                 });
             };
         }])
-        .controller('GroupListController', ['$scope', '$uibModal', function GroupListController($scope, $uibModal) {
+        .controller('GroupListController', ['$scope', '$uibModal', 'Group', function GroupListController($scope, $uibModal, Group) {
             $scope.showCreateGroup = function showCreateGroup() {
+                $scope.newGroup = {};
                 $uibModal.open({
                     templateUrl: 'partials/create-group.html',
                     controller: 'CreateGroupController',
                     scope: $scope
                 });
             };
-            $scope.groups = [
-                {id: '0-ref', name: 'Dooty', numMembers: 4, ts: (new Date()).getTime()},
-                {id: '1-ref', name: 'Booger', numMembers: 6, ts: (new Date()).getTime()}
-            ];
-        }])
-        .controller('CreateGroupController', ['$scope', function CreateGroupController($scope) {
-            $scope.userDidCreateGroup = function userDidCreateGroup() {
-                $scope.isCreatingGroup = true;
-                $scope.$close();
+            $scope.groups = Group.own;
+            $scope.isLoadingGroups = function isLoadingGroups() {
+                return Group.own.$promise.$$state.status === 0;
             };
         }])
-        .controller('GroupDetailsController', ['$scope', '$window', '$timeout', '$stateParams', '$uibModal', function GroupDetailsController($scope, $window, $timeout, $stateParams, $uibModal) {
+        .controller('CreateGroupController', ['$scope', '$q', '$state', 'Group', function CreateGroupController($scope, $q, $state, Group) {
+            $scope.userDidCreateGroup = function userDidCreateGroup() {
+                $scope.isCreatingGroup = true;
+                $q.all([Group.save($scope.newGroup).$promise, Group.own.$promise])
+                    .then(function promiseDidResolve(results) {
+                        results[1].push(results[0]);
+                        $state.go('groupDetails', {
+                            groupId: results[0].id
+                        });
+                        $scope.$close();
+                        $scope.isCreatingGroup = false;
+                    });
+            };
+        }])
+        .controller('GroupDetailsController', ['$scope', '$window', '$timeout', '$location', '$state', '$stateParams', '$uibModal', 'User', 'Group', function GroupDetailsController($scope, $window, $timeout, $location, $state, $stateParams, $uibModal, User, Group) {
+
             function didRetrievePosition(position) {
-                /* TODO: send the user's position */
-                /* TODO: once the request is successful, add/replace the user's position in the member list */
+                User.self.$promise.then(function promiseDidResolve() {
+
+                    /* send the user's position */
+                    socket.emit('groupJoin', angular.extend({
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    }, User.self));
+
+                    /* TODO: once the request is successful, add/replace the user's position in the member list */
+
+                });
             }
 
             function sendPosition() {
@@ -208,38 +227,32 @@
                 $scope.selectedAlgorithm = algorithm;
             };
             $scope.resendPosition = sendPosition;
-            $scope.copyUrl = 'http://middle-me.appspot.com/ui/#/groups/' + $stateParams.groupId;
-            $scope.members = [
-                {
-                    id: '0-ref',
-                    name: 'ofuangka',
-                    latitude: 40.0442507,
-                    longitude: -75.3882961,
-                    ts: (new Date()).getTime(),
-                    active: true
-                },
-                {
-                    id: '1-ref',
-                    name: 'tracylvalenzuela',
-                    latitude: 40.0065617,
-                    longitude: -75.2649071,
-                    ts: (new Date()).getTime(),
-                    active: true
-                },
-                {
-                    id: '2-ref',
-                    name: 'forrestjacobs',
-                    latitude: 40.079362,
-                    longitude: -75.3039367,
-                    ts: (new Date()).getTime(),
-                    active: true
-                }
-            ];
+            $scope.copyUrl = $location.absUrl();
             $scope.algorithms = [
                 {name: 'simple', link: 'https://en.wikipedia.org/wiki/Center_of_mass'},
                 {name: 'trossian', link: 'http://stackoverflow.com/a/17225597'}
             ];
             $scope.selectedAlgorithm = $scope.algorithms[0];
+            $scope.isLoadingMembers = true;
+            Group.own.$promise.then(function promiseDidResolve(result) {
+                var i, len, group;
+
+                /* check that this group exists in the user's own list */
+                $scope.selectedGroup = null;
+                for (i = 0, len = Group.own.length; i < len; i++) {
+                    group = Group.own[i];
+                    if (group.id === $stateParams.groupId) {
+                        $scope.selectedGroup = group;
+                        $scope.isLoadingMembers = false;
+                        break;
+                    }
+                }
+
+                /* if the group doesn't exist, send them back to the list screen */
+                if ($scope.selectedGroup === null) {
+                    $state.go('groupList');
+                }
+            });
 
             /* TODO: if the user has not yet sent their position, send it */
         }])
@@ -267,4 +280,4 @@
             $scope.title = 'Could not copy URL';
             $scope.message = 'We couldn\'t copy the URL for some reason. You may have to do it the old fashioned way.';
         }]);
-}(window.angular));
+}(window.angular, window.io));
