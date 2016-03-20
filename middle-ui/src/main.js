@@ -75,17 +75,15 @@
 
                         /* drop pins for each group member */
                         angular.forEach(scope.groupMembers, function iterator(groupMember) {
-                            if (groupMember.active) {
-                                bounds.extend(new google.maps.Marker({
-                                    position: {
-                                        lat: groupMember.latitude,
-                                        lng: groupMember.longitude
-                                    },
-                                    map: map,
-                                    label: groupMember.name,
-                                    title: groupMember.name
-                                }).getPosition());
-                            }
+                            bounds.extend(new google.maps.Marker({
+                                position: {
+                                    lat: groupMember.lat,
+                                    lng: groupMember.lng
+                                },
+                                map: map,
+                                label: groupMember.username,
+                                title: groupMember.username
+                            }).getPosition());
                         });
 
                         /* drop the center pin */
@@ -171,23 +169,23 @@
                     });
             };
         }])
-        .controller('GroupDetailsController', ['$scope', '$window', '$timeout', '$location', '$state', '$stateParams', '$uibModal', 'User', 'Group', function GroupDetailsController($scope, $window, $timeout, $location, $state, $stateParams, $uibModal, User, Group) {
+        .controller('GroupDetailsController', ['$scope', '$window', '$timeout', '$location', '$q', '$state', '$stateParams', '$uibModal', 'User', 'Group', 'Member', function GroupDetailsController($scope, $window, $timeout, $location, $q, $state, $stateParams, $uibModal, User, Group, Member) {
 
             function didRetrievePosition(position) {
-                User.self.$promise.then(function promiseDidResolve() {
-
-                    /* send the user's position */
-                    socket.emit('groupJoin', angular.extend({
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude
-                    }, User.self));
-
-                    /* TODO: once the request is successful, add/replace the user's position in the member list */
-
+                Member.save({
+                    groupId: $scope.selectedGroup.id
+                }, {
+                    groupId: $scope.selectedGroup.id,
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                }).$promise.then(function promiseDidResolve(result) {
+                    $scope.selectedGroup.members.push(result);
+                    $scope.isLoadingPosition = false;
                 });
             }
 
             function sendPosition() {
+                $scope.isLoadingPosition = true;
                 if ($window.navigator.geolocation) {
                     $window.navigator.geolocation.getCurrentPosition(didRetrievePosition);
                 } else {
@@ -200,12 +198,16 @@
                 }
             }
 
-            $scope.isActive = function isActive(member) {
-                return member.active;
-            };
-            $scope.toggle = function toggle(member) {
-                member.active = !member.active;
-            };
+            function isUserInGroup() {
+                var i, len;
+                for (i = 0, len = $scope.selectedGroup.members.length; i < len; i++) {
+                    if (User.self.id === $scope.selectedGroup.members[i].userId) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
             $scope.openNew = function openNew(url) {
                 $window.open(url, '_blank');
             };
@@ -234,7 +236,7 @@
             ];
             $scope.selectedAlgorithm = $scope.algorithms[0];
             $scope.isLoadingMembers = true;
-            Group.own.$promise.then(function promiseDidResolve(result) {
+            $q.all([Group.own.$promise, User.self.$promise]).then(function promiseDidResolve(results) {
                 var i, len, group;
 
                 /* check that this group exists in the user's own list */
@@ -251,10 +253,17 @@
                 /* if the group doesn't exist, send them back to the list screen */
                 if ($scope.selectedGroup === null) {
                     $state.go('groupList');
+                } else {
+
+                    /* if the user doesn't appear in the group yet, try to send the location */
+                    if (!isUserInGroup()) {
+                        sendPosition();
+                    }
                 }
             });
-
-            /* TODO: if the user has not yet sent their position, send it */
+            $scope.isSelf = function isSelf(member) {
+                return User.self.id === member.userId;
+            };
         }])
         .controller('AboutController', ['$scope', function AboutController($scope) {
             $scope.activeSlide = 0;

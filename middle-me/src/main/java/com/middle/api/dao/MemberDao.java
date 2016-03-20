@@ -11,6 +11,8 @@ public interface MemberDao {
 	Member update(Member newValue);
 
 	Member create(Member member);
+	
+	Member delete(String memberId);
 
 	List<Member> getByGroupId(String groupId);
 

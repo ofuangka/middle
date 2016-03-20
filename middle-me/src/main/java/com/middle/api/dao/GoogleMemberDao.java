@@ -20,6 +20,7 @@ public class GoogleMemberDao extends GoogleDatastoreDao<Member> implements Membe
 	private static final String KIND_MEMBER = "Member";
 	private static final String KEY_GROUP_ID = "groupId";
 	private static final String KEY_USER_ID = "userId";
+	private static final String KEY_USERNAME = "username";
 	private static final String KEY_LAST_UPDATED_TS = "lastUpdatedTs";
 	private static final String KEY_LAT = "lat";
 	private static final String KEY_LNG = "lng";
@@ -35,6 +36,7 @@ public class GoogleMemberDao extends GoogleDatastoreDao<Member> implements Membe
 			ret.setLat((Double) e.getProperty(KEY_LAT));
 			ret.setLng((Double) e.getProperty(KEY_LNG));
 			ret.setUserId((String) e.getProperty(KEY_USER_ID));
+			ret.setUsername((String) e.getProperty(KEY_USERNAME));
 			return ret;
 		}
 
@@ -45,6 +47,7 @@ public class GoogleMemberDao extends GoogleDatastoreDao<Member> implements Membe
 			to.setProperty(KEY_LAT, from.getLat());
 			to.setProperty(KEY_LNG, from.getLng());
 			to.setProperty(KEY_USER_ID, from.getUserId());
+			to.setProperty(KEY_USERNAME, from.getUsername());
 		}
 	};
 

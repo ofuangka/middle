@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -64,7 +65,7 @@ public class Group extends HasId {
 	@Override
 	public boolean equals(Object obj) {
 		// 2 groups are the same if they have the same ID
-		return Group.class.isAssignableFrom(obj.getClass()) && ((Group) obj).id == id;
+		return obj instanceof Group && obj != null && StringUtils.equals(((Group) obj).id, id);
 	}
 
 	@Override

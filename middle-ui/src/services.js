@@ -6,21 +6,18 @@
                 $get: [function $get() {
                     return {
                         center: function (groupMembers, algorithm) {
-                            var i, lat = 51.5287352, lng = -0.3817794, numActive = 0;
+                            var i, lat = 51.5287352, lng = -0.3817794;
                             if (groupMembers) {
                                 lat = 0;
                                 lng = 0;
                                 switch (algorithm) {
                                     default:
                                         for (i = 0; i < groupMembers.length; i++) {
-                                            if (groupMembers[i].active) {
-                                                lat += groupMembers[i].latitude;
-                                                lng += groupMembers[i].longitude;
-                                                numActive++;
-                                            }
+                                            lat += groupMembers[i].lat;
+                                            lng += groupMembers[i].lng;
                                         }
-                                        lat /= numActive;
-                                        lng /= numActive;
+                                        lat /= groupMembers.length;
+                                        lng /= groupMembers.length;
                                         break;
                                 }
                             }
@@ -47,6 +44,13 @@
                     return angular.extend({
                         own: Group.query({own: true})
                     }, Group);
+                }]
+            };
+        })
+        .provider('Member', function MemberProvider() {
+            return {
+                $get: ['$resource', function MemberServiceFactory($resource) {
+                    return $resource('/api/groups/:groupId/members/:id');
                 }]
             };
         });

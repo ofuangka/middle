@@ -5,7 +5,7 @@
             on-failed="copyDidFail(err)" uib-tooltip="Copied!" tooltip-is-open="showCopySuccessTooltip"
             tooltip-trigger="none"><i class="glyphicon glyphicon-copy margin-right-sm"></i>Copy me!
     </button></span></div>
-    <div id="group-details-map" class="margin-bottom-md" middle-map="members" algorithm="selectedAlgorithm"></div>
+    <div id="group-details-map" class="margin-bottom-md" middle-map="selectedGroup.members" algorithm="selectedAlgorithm"></div>
     <div class="text-right margin-bottom-md">
         <label class="margin-right-sm">
             <span ng-if="!selectedAlgorithm.link">Algorithm:</span>
@@ -23,16 +23,16 @@
         </div>
     </div>
     <spinner ng-if="isLoadingMembers"></spinner>
-    <uib-alert type="info" ng-if="!isLoadingMembers && members.length === 0">No members yet.</uib-alert>
+    <uib-alert type="info" ng-if="!isLoadingMembers && selectedGroup.members.length === 0">No members yet.</uib-alert>
     <div class="list-group">
-        <a href="" class="list-group-item" ng-repeat="member in selectedGroup.members | orderBy : 'ts' : true"
-           ng-click="toggle(member)">
+        <div class="list-group-item" ng-repeat="member in selectedGroup.members | orderBy : 'ts' : true">
             <h5>
-                <i class="pull-right glyphicon margin-right-sm"
-                   ng-class="{'glyphicon-ok': isActive(member), 'glyphicon-minus': !isActive(member)}"></i>
-                <strong>{{ member.name }}</strong>: {{ member.latitude | number }}, {{ member.longitude | number }}
-                <small>({{ member.ts | date : 'mediumTime' }})</small>
+                <button class="btn btn-default btn-xs margin-right-sm" ng-if="isSelf(member)"
+                        ng-click="resendPosition()"
+                        loading-button="'Resend position'" is-loading="isLoadingPosition"></button>
+                <strong>{{ member.username }}</strong>: {{ member.lat | number }}, {{ member.lng | number }}
+                <small>({{ member.lastUpdatedTs | date : 'mediumTime' }})</small>
             </h5>
-        </a>
+        </div>
     </div>
 </div>

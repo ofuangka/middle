@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.middle.api.support.HasId;
@@ -12,7 +13,9 @@ import com.middle.api.support.HasId;
 @XmlRootElement
 public class Member extends HasId {
 
+	@Null
 	private String userId;
+	private String username;
 	private String groupId;
 
 	@NotNull
@@ -24,6 +27,8 @@ public class Member extends HasId {
 	@Min(-180)
 	@Max(180)
 	private Double lng;
+	
+	@Null
 	private Date lastUpdatedTs;
 
 	public void setUserId(String userId) {
@@ -32,6 +37,14 @@ public class Member extends HasId {
 
 	public String getUserId() {
 		return userId;
+	}
+	
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
+	public String getUsername() {
+		return username;
 	}
 
 	public void setGroupId(String groupId) {
