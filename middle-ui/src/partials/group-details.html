@@ -5,7 +5,8 @@
             on-failed="copyDidFail(err)" uib-tooltip="Copied!" tooltip-is-open="showCopySuccessTooltip"
             tooltip-trigger="none"><i class="glyphicon glyphicon-copy margin-right-sm"></i>Copy me!
     </button></span></div>
-    <div id="group-details-map" class="margin-bottom-md" middle-map="selectedGroup.members" algorithm="selectedAlgorithm"></div>
+    <div id="group-details-map" class="margin-bottom-md" middle-map="selectedGroup.members"
+         algorithm="selectedAlgorithm"></div>
     <div class="text-right margin-bottom-md">
         <label class="margin-right-sm">
             <span ng-if="!selectedAlgorithm.link">Algorithm:</span>
@@ -30,7 +31,7 @@
                 <button class="btn btn-default btn-xs margin-right-sm" ng-if="isSelf(member)"
                         ng-click="resendPosition()"
                         loading-button="'Resend position'" is-loading="isLoadingPosition"></button>
-                <strong>{{ member.username }}</strong>: {{ member.lat | number }}, {{ member.lng | number }}
+                <strong>{{ member.username }}</strong>
                 <small>({{ member.lastUpdatedTs | date : 'mediumTime' }})</small>
             </h5>
         </div>

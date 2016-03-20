@@ -179,7 +179,18 @@
                     lat: position.coords.latitude,
                     lng: position.coords.longitude
                 }).$promise.then(function promiseDidResolve(result) {
-                    $scope.selectedGroup.members.push(result);
+                    /* replace the member if it already exists */
+                    var i, len, members = $scope.selectedGroup.members, memberExists;
+                    for (i = 0, len = members.length; i < len; i++) {
+                        if (members[i].id === result.id) {
+                            members.splice(i, 1, result);
+                            memberExists = true;
+                            break;
+                        }
+                    }
+                    if (!memberExists) {
+                        $scope.selectedGroup.members.push(result);
+                    }
                     $scope.isLoadingPosition = false;
                 });
             }
