@@ -169,7 +169,7 @@
                     });
             };
         }])
-        .controller('GroupDetailsController', ['$scope', '$window', '$timeout', '$location', '$q', '$state', '$stateParams', '$uibModal', 'User', 'Group', 'Member', function GroupDetailsController($scope, $window, $timeout, $location, $q, $state, $stateParams, $uibModal, User, Group, Member) {
+        .controller('GroupDetailsController', ['$scope', '$window', '$timeout', '$location', '$q', '$interval', '$state', '$stateParams', '$uibModal', 'User', 'Group', 'Member', function GroupDetailsController($scope, $window, $timeout, $location, $q, $interval, $state, $stateParams, $uibModal, User, Group, Member) {
 
             function didRetrievePosition(position) {
                 Member.save({
@@ -179,18 +179,9 @@
                     lat: position.coords.latitude,
                     lng: position.coords.longitude
                 }).$promise.then(function promiseDidResolve(result) {
-                    /* replace the member if it already exists */
-                    var i, len, members = $scope.selectedGroup.members, memberExists;
-                    for (i = 0, len = members.length; i < len; i++) {
-                        if (members[i].id === result.id) {
-                            members.splice(i, 1, result);
-                            memberExists = true;
-                            break;
-                        }
-                    }
-                    if (!memberExists) {
-                        $scope.selectedGroup.members.push(result);
-                    }
+
+                    /* send the update to the websocket */
+                    ws.send(JSON.stringify(result));
                     $scope.isLoadingPosition = false;
                 });
             }
@@ -218,6 +209,31 @@
                 }
                 return false;
             }
+
+            var ws = new WebSocket('ws://middle-ws.herokuapp.com');
+            ws.onmessage = function serverDidSendMessage(message) {
+                var member = JSON.parse(message.data);
+
+                /* replace the member if it already exists */
+                var i, len, members = $scope.selectedGroup.members, memberExists;
+                for (i = 0, len = members.length; i < len; i++) {
+                    if (members[i].id === member.id) {
+                        members.splice(i, 1, member);
+                        memberExists = true;
+                        break;
+                    }
+                }
+                if (!memberExists) {
+                    $scope.selectedGroup.members.push(member);
+                }
+                $scope.$digest();
+            };
+            var stop = $interval(function pingWebSocket() {
+                ws.send('"ping"');
+            }, 30000);
+            $scope.$on('destroy', function onDestroy() {
+                $interval.cancel(stop);
+            });
 
             $scope.openNew = function openNew(url) {
                 $window.open(url, '_blank');

@@ -1,10 +1,5 @@
 <div ng-controller="GroupDetailsController">
-    <div class="input-group margin-bottom-md"><input class="form-control" readonly="readonly" ng-model="copyUrl"/><span
-            class="input-group-btn"><button
-            class="btn btn-default" clipboard="" text="copyUrl" on-copied="copyDidSucceed()"
-            on-failed="copyDidFail(err)" uib-tooltip="Copied!" tooltip-is-open="showCopySuccessTooltip"
-            tooltip-trigger="none"><i class="glyphicon glyphicon-copy margin-right-sm"></i>Copy me!
-    </button></span></div>
+    <div class="input-group margin-bottom-md"><input class="form-control" readonly="readonly" ng-model="copyUrl"/></div>
     <div id="group-details-map" class="margin-bottom-md" middle-map="selectedGroup.members"
          algorithm="selectedAlgorithm"></div>
     <div class="text-right margin-bottom-md">

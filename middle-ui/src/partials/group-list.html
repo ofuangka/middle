@@ -13,7 +13,6 @@
         <a class="list-group-item" ng-repeat="group in groups | orderBy : 'ts' : true" ui-sref="groupDetails({ groupId: group.id })">
             <h5><span class="badge">{{ group.ts
             | groupListDate }}</span> {{ group.name }}
-                <small>({{ group.members.length | members }})</small>
             </h5>
         </a>
     </div>
