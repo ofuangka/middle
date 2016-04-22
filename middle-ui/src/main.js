@@ -277,15 +277,21 @@
                     }
                 }
 
-                /* if the group doesn't exist, send them back to the list screen */
+                /* if the group isn't in the user's own list, try adding it */
                 if ($scope.selectedGroup === null) {
-                    $state.go('groupList');
-                } else {
+                    $scope.selectedGroup = Group.get({ id: $stateParams.groupId});
+                    $scope.selectedGroup.$promise.then(function promiseDidResolve() {
+                        if ($scope.selectedGroup === null) {
+                            $state.go('groupList');
+                        } else {
+                            $scope.isLoadingMembers = false;
 
-                    /* if the user doesn't appear in the group yet, try to send the location */
-                    if (!isUserInGroup()) {
-                        sendPosition();
-                    }
+                            /* if the user doesn't appear in the group yet, try to send the location */
+                            if (!isUserInGroup()) {
+                                sendPosition();
+                            }
+                        }
+                    });
                 }
             });
             $scope.isSelf = function isSelf(member) {

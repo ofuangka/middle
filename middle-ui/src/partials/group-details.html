@@ -1,5 +1,4 @@
 <div ng-controller="GroupDetailsController">
-    <div class="input-group margin-bottom-md"><input class="form-control" readonly="readonly" ng-model="copyUrl"/></div>
     <div id="group-details-map" class="margin-bottom-md" middle-map="selectedGroup.members"
          algorithm="selectedAlgorithm"></div>
     <div class="text-right margin-bottom-md">
@@ -25,7 +24,7 @@
             <h5>
                 <button class="btn btn-default btn-xs margin-right-sm" ng-if="isSelf(member)"
                         ng-click="resendPosition()"
-                        loading-button="'Resend position'" is-loading="isLoadingPosition"></button>
+                        loading-button="'Reposition'" is-loading="isLoadingPosition"></button>
                 <strong>{{ member.username }}</strong>
                 <small>({{ member.lastUpdatedTs | date : 'mediumTime' }})</small>
             </h5>
