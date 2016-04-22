@@ -1,4 +1,4 @@
-(function wrapper(angular, io) {
+(function wrapper(angular, io, ReconnectingWebSocket) {
     'use strict';
     angular.module('Middle', ['ngResource', 'ngAnimate', 'ngTouch', 'ui.router', 'ui.bootstrap', 'angular-clipboard', 'spinner', 'loadingButton'])
         .config(['$stateProvider', '$urlRouterProvider', function configFn($stateProvider, $urlRouterProvider) {
@@ -210,7 +210,7 @@
                 return false;
             }
 
-            var ws = new WebSocket('ws://middle-ws.herokuapp.com');
+            var ws = new ReconnectingWebSocket('ws://middle-ws.herokuapp.com');
             ws.onmessage = function serverDidSendMessage(message) {
                 var member = JSON.parse(message.data);
 
@@ -322,4 +322,4 @@
             $scope.title = 'Could not copy URL';
             $scope.message = 'We couldn\'t copy the URL for some reason. You may have to do it the old fashioned way.';
         }]);
-}(window.angular, window.io));
+}(window.angular, window.io, window.ReconnectingWebSocket));
